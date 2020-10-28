@@ -48,7 +48,7 @@ CREATE TABLE Shop(
 	homeID	INT unsigned,
 	PRIMARY KEY(groceryID, homeID),
 	FOREIGN KEY (groceryID) REFERENCES Grocery(groceryID),
-	FOREIGN KEY (homeID) REFERENCES Home(homeID),
+	FOREIGN KEY (homeID) REFERENCES Home(homeID)
 );
 
 
@@ -58,5 +58,5 @@ CREATE TABLE Does(
 	homeID	INT unsigned,
 	PRIMARY KEY(choreID, homeID),
 	FOREIGN KEY (choreID) REFERENCES Chore(choreID),
-	FOREIGN KEY (homeID) REFERENCES Home(homeID),
+	FOREIGN KEY (homeID) REFERENCES Home(homeID)
 );
