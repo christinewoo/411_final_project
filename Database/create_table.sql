@@ -35,18 +35,6 @@ CREATE TABLE Chore(
 	FOREIGN KEY  (memberID) REFERENCE Member(memberID)
 );
 
-CREATE TABLE ToolNeeded(
-	ChoreName	VARCHAR(20), 
-	ItemName	VARCHAR(20),
-	PRIMARY KEY(ChoreName)
-);
-
-CREATE TABLE ShelfLife(
-	ItemType	VARCHAR(20) NOT NULL, 
-	Longevity	VARCHAR(10),
-	PRIMARY KEY(ItemType)
-);
-
 CREATE TABLE Contain(
 	memberID 	INT unsigned AUTO_INCREMENT,
 	homeID 	INT unsigned AUTO_INCREMENT, 
