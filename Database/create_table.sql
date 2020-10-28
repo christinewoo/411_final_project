@@ -9,7 +9,7 @@ CREATE TABLE Home(
 	memberID 	INT unsigned AUTO_INCREMENT,
 	homeName	CHAR(20) NOT NULL ,
 	PRIMARY KEY(homeID, memberID),
-	FOREIGN KEY (memberID) REFERENCE Member(memberID)
+	FOREIGN KEY (memberID) REFERENCES Member(memberID)
 );
 
 CREATE TABLE Grocery(
@@ -21,7 +21,7 @@ CREATE TABLE Grocery(
 	ExpirationDate	DATE, 
 	ItemType	VARCHAR(20),
 	PRIMARY KEY (groceryID),
-	FOREIGN KEY (memberID) REFERENCE Member(memberID)
+	FOREIGN KEY (memberID) REFERENCES Member(memberID)
 );
 
 CREATE TABLE Chore(
@@ -32,7 +32,7 @@ CREATE TABLE Chore(
 	status		VARCHAR(5), 
 	steps		INT NOT NULL DEFAULT 1,
 	PRIMARY KEY  (choreID),
-	FOREIGN KEY  (memberID) REFERENCE Member(memberID)
+	FOREIGN KEY  (memberID) REFERENCES Member(memberID)
 );
 
 CREATE TABLE Contain(
