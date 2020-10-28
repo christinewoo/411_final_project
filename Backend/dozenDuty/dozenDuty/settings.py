@@ -25,7 +25,7 @@ SECRET_KEY = 'v4t_c9kl=#q0%5121v4e$a3!s4!u9xl6^&wqsy^(s@@og3m+4w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -81,7 +81,7 @@ DATABASES = {
         'PASSWORD' : '1111',
      #   'OPTION': {
      #              'read_default_file': '/etc/mysql/my.cnf',
-     #             },
+     #},
     }
 }
 
