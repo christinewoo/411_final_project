@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+iframe 
+{
+ width: 100%; 
+
+}
+
+table,td{
+  border:1px solid black;
+  table-layout:fixed;
+}
