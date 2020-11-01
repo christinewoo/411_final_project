@@ -15,6 +15,7 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="stylesheet" href="../src/page2.css">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -24,11 +25,11 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Page two</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root2"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -39,29 +40,12 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <h1>&nbsp Dozen Duty</h1>
-    <table width = "100%" height="1200px class="table">
-      <tr valign = "top">
-        <td width = "220px" position="fixed" height = "60px">
-          <p><a href="page2.html" target="iframe2">Dashboard</a></p>
-        </td>
-        
-        <td width="80%" rowspan="3">
-          <iframe name="iframe2" src ="page2.html"></iframe>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td width = "220px" position="fixed" height = "60px" valign="top">
-          <p><a href="notification.html" target="iframe2">Notifications</a></p>
-        </td>
-      </tr>
-      <tr>
-        <td width = "220px" position="fixed" valign="top">
-          <p><a href="notification.html" target="iframe2">Notifications</a></p>
-        </td>
-      </tr>
-    </table>
+    <h1> This is the home page </h1>
+    <div id="testbutton_container"></div>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  
+    <!-- Load our React component. -->
+    <script src="../src/testbutton.js"></script>
   </body>
 </html>

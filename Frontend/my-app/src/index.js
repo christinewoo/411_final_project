@@ -1,10 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Button from '@material-ui/core/Button';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 //import * as serviceWorker from './serviceWorker';
 
+
+//ReactDOM.render(<App />, document.querySelector('#app'));
 
 ReactDOM.render(
   <React.StrictMode>
@@ -13,8 +16,8 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-var element = React.createElement('h1', { className: 'greeting' }, 'this is the front end for our project!');
-ReactDOM.render(element, document.getElementById('root'));
+// var element = React.createElement('h1', { className: 'greeting' }, 'this is the front end for our project!');
+// ReactDOM.render(element, document.getElementById('root'));
 //serviceWorker.unregister();
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
