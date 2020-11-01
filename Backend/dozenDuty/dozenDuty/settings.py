@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'dozenDuty_app.apps.DozendutyAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,9 +80,6 @@ DATABASES = {
         'NAME' : 'dozenDuty',
         'USER' : 'djangouser',
         'PASSWORD' : '1111',
-     #   'OPTION': {
-     #              'read_default_file': '/etc/mysql/my.cnf',
-     #},
     }
 }
 
