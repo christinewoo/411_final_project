@@ -41,5 +41,43 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <h1> This is the home page </h1>
+    <p>I have bought some items. Their names and prices are: </p>
+    <ul id = "demo">
+    </ul>
+    <ul id = "prices"></ul>
+
+    <script>
+      var myJSON = `[
+                      {"name":"Lemons", "price":1.45, "Expiring in":"1 week"},
+                      {"name":"Coca-cola", "price":0.99, "Expiring in":"never"},                 
+                      {"name":"Ben & Jerry Ice Cream", "price":4.99, "Expiring in":"2 months if frozen"}
+
+                    ]`;
+      var obj = JSON.parse(myJSON);
+      var node = document.createElement("LI");
+
+      for (var elem = 0; elem < myJSON.length; elem++) {
+        //console.log(obj.name);
+        var textnode = document.createTextNode(obj[elem].name + ": ");
+        node.appendChild(textnode);
+        document.getElementById("demo").appendChild(node);
+
+        var pricenode = document.createTextNode("$" + obj[elem].price + ". ");
+        node.appendChild(pricenode);
+        document.getElementById("prices").appendChild(node);
+
+      }              
+
+      // var i;
+      // for(i = 0;i < myJSON.length; i++) {
+      //   var grocery = JSON.parse(myJSON)
+      //   console.log(grocery[i].name);
+      // }
+      // var myobj = JSON.parse(myJSON);
+      // document.getElementById("demo").innerHTML = myobj[0].name;
+      // document.getElementById("prices").innerHTML = myobj[0].price;
+      // console.log(myobj);
+
+    </script>
   </body>
 </html>
