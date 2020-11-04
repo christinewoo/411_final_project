@@ -1,24 +1,22 @@
-<!--{% extends "dozenDuty_app/base.html" %}-->
-{% block content %}
-    <h1>Home Page</h1>
-{% endblock content %}-->
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="Web site created using create-react-app"
     />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="stylesheet" href="dozenDuty_app/static/home.css">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="stylesheet" href="./home.css">
+
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -47,23 +45,28 @@
     <!-- new table layout -->
     <table width = "100%" height="1200px">
       <tr valign = "top">
-        <td width = "100px" position="fixed" height = "60px"\>
-          <p><a href="dashboard.html" target="iframe2">Dashboard</a></p>
+        <td width = "100px" position="fixed" height = "40px" style="text-align:center"\>
+          <p><a href="dashboard.html" target="iframe2" >Dashboard</a></p>
         </td>
         
         <!-- right hand side content -->
-        <td width="80%" rowspan="3" height="100%">
-          <iframe name="iframe2" src ="dashboard.html"></iframe>
+        <td width="80%" rowspan="5" height="100%">
+          <iframe name="iframe2" src ="dashboard.html" width="100%" height="100%"></iframe>
         </td>
       </tr>
       <tr>
-        <td width = "100px" position="fixed" height = "60px" valign="top">
+        <td width = "100px" position="fixed" height = "40px" valign="top"style="text-align:center">
           <p><a href="notification.html" target="iframe2">Notifications</a></p>
         </td>
       </tr>
       <tr>
-        <td width = "100px" position="fixed">
-          <p><a href="notification.html" target="iframe2">Notifications</a></p>
+        <td width = "100px" position="fixed" valign="top" style="text-align:center" height = "40px">
+          <p><a href="Grocery.html" target="iframe2">Grocery</a></p>
+        </td>
+      </tr>
+      <tr>
+          <td width = "100px" position="fixed" valign="top" style="text-align:center" height = "40px">
+          <p><a href="Chores.html" target="iframe2">Chores</a></p>
         </td>
       </tr>
     </table>
