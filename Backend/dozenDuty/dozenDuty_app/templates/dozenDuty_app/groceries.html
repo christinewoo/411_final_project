@@ -1,4 +1,71 @@
 {% extends "dozenDuty_app/base.html" %}
 {% block content %}
-    <h1>Groceries</h1>
+    <div id="root2"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+    <h1> This is the groceries page </h1>
+    <p>I have bought some items. Their names and prices are: </p>
+    <ul id = "demo">
+    </ul>
+    <ul id = "prices"></ul>
+    
+    <h2> Add grocery items to shopping list </h2>
+    <input type="text" name="" value="item" id="item">
+    <br>
+    <input type="text" name="" value="quantity" id="quantity">
+    <br>
+
+    <select id="unit">
+      <option value="ct">count</option>
+      <option value="oz">ounces</option>
+      <option value="lb">pounds</option>
+      <option value="servings">servings</option>
+    </select>
+
+    <br>
+    <button onclick="addToList()" type="button" name="button" id="addButton">add</button>
+    <br>
+    <ul id="shoppinglist"></ul>
+    <script>
+      var myJSON = `[
+                      {"name":"Lemons", "price":1.45, "Expiring in":"1 week"},
+                      {"name":"Coca-cola", "price":0.99, "Expiring in":"never"},                 
+                      {"name":"Ben & Jerry Ice Cream", "price":4.99, "Expiring in":"2 months if frozen"}
+
+                    ]`;
+      var obj = JSON.parse(myJSON);
+      var node = document.createElement("LI");
+
+      for (var elem = 0; elem < myJSON.length; elem++) {
+        //console.log(obj.name);
+        var textnode = document.createTextNode(obj[elem].name + ": ");
+        node.appendChild(textnode);
+        document.getElementById("demo").appendChild(node);
+
+        var pricenode = document.createTextNode("$" + obj[elem].price + ". ");
+        node.appendChild(pricenode);
+        document.getElementById("prices").appendChild(node);
+
+      }       
+
+      function addToList() {
+          let item = document.getElementById("item").value;
+          let quantity = document.getElementById("quantity").value;
+          let unit = document.getElementById("unit").value;
+
+          let li = document.createElement("li");
+          li.textContent = item + ' ' + quantity + ' ' + unit + '.';
+          document.getElementById("shoppinglist").appendChild(li);
+      }
+
+
+    </script>
 {% endblock content %}
