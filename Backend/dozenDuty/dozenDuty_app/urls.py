@@ -9,6 +9,7 @@ from .views import(
 )
 from . import views
 
+
 urlpatterns = [
     path('', views.main, name='dozenDuty_main'),
     path('groceries/', GroceryListView.as_view(), name='groceries'),
