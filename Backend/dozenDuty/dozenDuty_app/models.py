@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 class Member(models.Model):
     memberID = models.AutoField(primary_key=True) 
@@ -23,15 +24,18 @@ class Home(models.Model):
 class Grocery(models.Model):
     groceryID = models.AutoField(primary_key=True) 
     groceryName = models.CharField(max_length=50)
-    memberID = models.ForeignKey(Member, on_delete=models.CASCADE)
+    memberName = models.CharField(max_length=50,default='Sean')#models.ForeignKey(Member, on_delete=models.CASCADE)
     unitPrice =  models.FloatField()
     quantity = models.IntegerField()
-    purchaseDate = models.DateField()
-    ExpirationDate = models.DateField()
+    purchaseDate = models.DateField(default=timezone.now)
+    ExpirationDate = models.DateField(default=timezone.now)
     ItemType = models.CharField(max_length=30)
 
     def __str__(self):
         return self.groceryName
+
+    def get_absolute_url(self):
+        return reverse('groceries-detail', kwargs={'pk': self.pk})
  
  
 class Chore(models.Model):

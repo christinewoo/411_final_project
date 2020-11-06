@@ -1,0 +1,24 @@
+{% extends "dozenDuty_app/base.html" %}
+{% block content %}
+<article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.ItemType }}</a>
+        <small class="text-muted">{{ object.memberName }} purchased on {{ object.purchaseDate|date:"F d, Y" }}</small>
+      </div>
+      <div>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'groceries-update' object.groceryID %}">Update</a>
+        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'groceries-delete' object.groceryID %}">Delete</a>
+      </div>
+      <h2 class="article-title">{{ object.groceryName }}</h2>
+      <h1 class="article-title">
+          {% widthratio object.unitPrice 1 object.quantity as total_price %}
+          ${{ total_price }}
+      </h1>
+      <p class="article-content">
+        Unit Price: ${{grocery.unitPrice}}
+        Quantity: ${{grocery.quantity}}
+    </p>
+    </div>
+  </article>
+{% endblock content %}

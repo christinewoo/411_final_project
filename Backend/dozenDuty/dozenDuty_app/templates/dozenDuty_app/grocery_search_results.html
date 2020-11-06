@@ -1,0 +1,25 @@
+{% extends "dozenDuty_app/base.html" %}
+{% block content %}
+    <div>
+        <h1> 
+            Groceries 
+            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'groceries' %}">Clear Search</a>
+        </h1>
+        
+    </div>
+    {% for grocery in object_list %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ grocery.ItemType }}</a>
+              <small class="text-muted">{{ grocery.memberName }} purchased on {{ grocery.purchaseDate|date:"F d, Y" }}</small>
+            </div>
+            <h2>
+                <a class="article-title" href="{% url 'groceries-detail' grocery.groceryID %}">{{ grocery.groceryName }}:</a>
+                {% widthratio grocery.unitPrice 1 grocery.quantity as total_price %}
+                ${{ total_price }}
+            </h2>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

@@ -1,39 +1,62 @@
 {% extends "dozenDuty_app/base.html" %}
 {% block content %}
-    <div id="root2"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <div>
+        <h1> 
+            Groceries 
+            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'groceries-create' %}">Add A New Grocery!</a>
+        </h1>
+        <form action="{% url 'groceries-search_results' %}" method="get">
+            <input name="q" type="text" placeholder="Search Grocery...">
+        </form>
+        <br>
+    </div>
+    {% for grocery in groceries %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ grocery.ItemType }}</a>
+              <small class="text-muted">{{ grocery.memberName }} purchased on {{ grocery.purchaseDate|date:"F d, Y" }}</small>
+            </div>
+            <h2>
+                <a class="article-title" href="{% url 'groceries-detail' grocery.groceryID %}">{{ grocery.groceryName }}:</a>
+                {% widthratio grocery.unitPrice 1 grocery.quantity as total_price %}
+                ${{ total_price }}
+            </h2>
+          </div>
+        </article>
+    {% endfor %}
+    <!-- <div>
+        <h1> Groceries </h1>
+    </div>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <div>
+        <p>I have bought some items. Their names and prices are: </p>
+        <ul id = "demo">
+        </ul>
+        <ul id = "prices"></ul>
+        <br>
+    </div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-    <h1> This is the groceries page </h1>
-    <p>I have bought some items. Their names and prices are: </p>
-    <ul id = "demo">
-    </ul>
-    <ul id = "prices"></ul>
+    <div>
+        <h3> Add grocery items to shopping list </h3>
+        <input type="text" name="" value="Item" id="item">
+        
+        <input type="text" name="" value="Quantity" id="quantity">
     
-    <h2> Add grocery items to shopping list </h2>
-    <input type="text" name="" value="item" id="item">
-    <br>
-    <input type="text" name="" value="quantity" id="quantity">
-    <br>
 
-    <select id="unit">
-      <option value="ct">count</option>
-      <option value="oz">ounces</option>
-      <option value="lb">pounds</option>
-      <option value="servings">servings</option>
-    </select>
+        <select id="unit">
+        <option value="ct">count</option>
+        <option value="oz">ounces</option>
+        <option value="lb">pounds</option>
+        <option value="servings">servings</option>
+        </select>
 
-    <br>
-    <button onclick="addToList()" type="button" name="button" id="addButton">add</button>
-    <br>
-    <ul id="shoppinglist"></ul>
+    
+        <button onclick="addToList()" type="button" name="button" id="addButton">add</button>
+        <br>
+        <ul id="shoppinglist"></ul>
+    </div>
+    
     <script>
       var myJSON = `[
                       {"name":"Lemons", "price":1.45, "Expiring in":"1 week"},
@@ -67,5 +90,5 @@
       }
 
 
-    </script>
+    </script> -->
 {% endblock content %}
