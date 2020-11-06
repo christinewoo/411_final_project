@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.db import connection
 from django.views.generic import(
     ListView,
     DetailView,
@@ -55,16 +56,33 @@ def chores(request):
     return render(request, 'dozenDuty_app/chores.html',{'title':'Chores'})
 
 def members(request):
-    members = Member.objects.all()
+    members = Member.objects.raw('SELECT * FROM dozenDuty_app_member')
     return render(request, 'dozenDuty_app/members.html', {'title':'Members','members': members})
 
 def addMember(request):
-	name = request.POST['memberName']
-	new_item = Member(memberName=name)
-	new_item.save()
-	return HttpResponseRedirect('/members/')
+    name = request.POST['memberName']
+    with connection.cursor() as cursor:
+        cursor.execute('INSERT INTO dozenDuty_app_member (memberName) VALUES(%s)',[name])
+    return HttpResponseRedirect('/members/')
 
 def removeMember(request, id):
-	to_remove = Member.objects.get(memberID=id)
-	to_remove.delete()
-	return HttpResponseRedirect('/members/')
+    with connection.cursor() as cursor:
+        cursor.execute('DELETE FROM dozenDuty_app_member WHERE memberID=%s',[id])
+    return HttpResponseRedirect('/members/')
+
+def updateMember(request, id):
+    name = request.POST['memberName']
+    with connection.cursor() as cursor:
+        cursor.execute('UPDATE dozenDuty_app_member SET memberName=%s WHERE memberID=%s',[name,id])
+    return HttpResponseRedirect('/members/')
+
+def searchMember(request):
+    name = request.GET.get('q')
+    search_key = '%' + name + '%'
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT memberName FROM dozenDuty_app_member WHERE memberName LIKE %s",[search_key])
+        members = cursor.fetchall()
+    members = list(members)
+    for i in range(len(members)):
+        members[i] = members[i][0]
+    return render(request, 'dozenDuty_app/members_search_results.html', {'title':'Members','members': members, 'name': name})

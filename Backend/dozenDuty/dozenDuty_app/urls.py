@@ -20,6 +20,8 @@ urlpatterns = [
     path('groceries/search/', GrocerySearchResultsView.as_view(), name='groceries-search_results'),
     path('chores/', views.chores, name='dozenDuty_chores'),
     path('members/', views.members, name='dozenDuty_members'),
-    path('addMember/', views.addMember),
-    path('removeMember/<int:id>/', views.removeMember),
+    path('addMember/', views.addMember, name='members-add'),
+    path('removeMember/<int:id>/', views.removeMember, name='members-remove'),
+    path('updateMember/<int:id>/', views.updateMember, name='members-update'),
+    path('searchMember/', views.searchMember, name='members-search_results'),
 ]

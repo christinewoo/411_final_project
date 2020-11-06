@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'dozenDuty.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME' : 'dozenDuty',
+        'NAME' : 'test',
         'USER' : 'djangouser',
         'PASSWORD' : '1111',
     }

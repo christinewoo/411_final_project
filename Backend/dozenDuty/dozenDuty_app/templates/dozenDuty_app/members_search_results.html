@@ -2,14 +2,15 @@
 {% block content %}
     <div>
         <h1>Members</h1>
-        <form action="{% url 'members-search_results' %}" method="get">
-            <input name="q" type="text" placeholder="Search Member...">
-        </form>
+        <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'dozenDuty_members' %}">Clear Search</a>
+    </div>
+    <div>
+        <h2> Search Results of {{name}} </h2>
     </div>
     <div>
         <ul>
             {% for member in members %}
-                <li>{{ member.memberName }}
+                <li>{{ member }}
                     <form action="/removeMember/{{member.memberID}}/" 
                           style="display: inline;"
                           method="post">
@@ -24,13 +25,5 @@
                 </li>
               {% endfor %}
         </ul>
-    </div>
-    <br>
-    <div>
-        <form action="/addMember/" method="post">
-            {% csrf_token %}
-            <input type="text" name="memberName"/>
-            <input type="submit" value="Add"/>
-        </form>
     </div>
 {% endblock content %}
