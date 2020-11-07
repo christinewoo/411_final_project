@@ -9,7 +9,7 @@ def main(request):
 """ Groceries Page """
 def groceries(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT g.groceryName, m.memberName, g.unitPrice, g.quantity, g.purchaseDate, g.ExpirationDate, g.ItemType, g.ItemUnit, g.groceryID FROM dozenDuty_app_grocery as g LEFT JOIN dozenDuty_app_member as m on g.memberID=m.memberID ")
+        cursor.execute("SELECT g.groceryName, m.memberName, g.unitPrice, g.quantity, g.purchaseDate, g.ExpirationDate, g.ItemType, g.ItemUnit, g.groceryID FROM dozenDuty_app_grocery as g LEFT JOIN dozenDuty_app_member as m on g.memberID=m.memberID ORDER BY g.ExpirationDate ASC")
         groceries = cursor.fetchall()
     groceries = list(groceries)
     for i in range(len(groceries)):
@@ -48,18 +48,19 @@ def updateGrocery(request, id):
     unit_price = request.POST['unitPrice']
     Quantity = request.POST['quantity']
     purchase_date = request.POST['purchaseDate']
-    expriation_date = request.POST['ExpirationDate']
+    expiration_date = request.POST['ExpirationDate']
     item_type = request.POST['ItemType']
     item_unit = request.POST['ItemUnit']
     with connection.cursor() as cursor:
         cursor.execute('UPDATE dozenDuty_app_grocery SET groceryName=%s,memberID=%s,unitPrice=%s,quantity=%s,purchaseDate=%s,ExpirationDate=%s,ItemType=%s,ItemUnit=%s WHERE groceryID=%s',[grocery_name,member_id,unit_price,Quantity,purchase_date,expiration_date,item_type,item_unit,id])
-    return HttpResponseRedirect('/groceries/id/')
+    grocery_detail_url = '/groceries/' + str(id) + '/detail/'
+    return HttpResponseRedirect(grocery_detail_url)
 
 def searchGrocery(request):
     name = request.GET.get('q')
     search_key = '%' + name + '%'
     with connection.cursor() as cursor:
-        cursor.execute(" SELECT g.groceryName, m.memberName, g.unitPrice, g.quantity, g.purchaseDate, g.ExpirationDate, g.ItemType, g.ItemUnit, g.groceryID FROM dozenDuty_app_grocery as g LEFT JOIN dozenDuty_app_member as m on g.memberID=m.memberID WHERE g.groceryName LIKE %s or m.memberName LIKE %s",[search_key,search_key])
+        cursor.execute(" SELECT g.groceryName, m.memberName, g.unitPrice, g.quantity, g.purchaseDate, g.ExpirationDate, g.ItemType, g.ItemUnit, g.groceryID FROM dozenDuty_app_grocery as g LEFT JOIN dozenDuty_app_member as m on g.memberID=m.memberID WHERE g.groceryName LIKE %s or m.memberName LIKE %s ORDER BY g.ExpirationDate ASC",[search_key,search_key])
         groceries = cursor.fetchall()
     groceries = list(groceries)
     for i in range(len(groceries)):

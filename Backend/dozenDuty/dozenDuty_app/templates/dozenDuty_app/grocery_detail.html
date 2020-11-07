@@ -26,7 +26,7 @@
         <br>
         <div>
             <h4> Update this grocery: </h4>
-            <form action="/groceries/{{groceries.8}}/update" style="display: inline;" method="post">
+            <form action="/groceries/{{groceries.8}}/update/" style="display: inline;" method="post">
                 {% csrf_token %}
                 <div>
                     <div>
@@ -43,7 +43,7 @@
                     <input type="text" name="ItemType" placeholder="Item Type">
                 </div>
                 <div>
-                    <input type="text" name="groceriesName" placeholder="groceries Name">
+                    <input type="text" name="groceryName" placeholder="groceries Name">
                     <input type="number" step="0.01" name="unitPrice" placeholder="Unit Price">
                     <input type="number" step="0.01" name="quantity" placeholder="Quantity">
                     <select name="ItemUnit" id="unit">
