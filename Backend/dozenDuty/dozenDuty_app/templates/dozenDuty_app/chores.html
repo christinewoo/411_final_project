@@ -1,82 +1,64 @@
- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link rel="stylesheet" href="../src/page2.css">
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+{% extends "dozenDuty_app/base.html" %}
+{% block content %}
+    <div>
+        <h1> Chores </h1>
+        <form action="{% url 'groceries-search_results' %}" method="get">
+            <input name="q" type="text" placeholder="Search In Grocery...">
+            <input class="btn btn-success btn-sm mt-1 mb-1" type="submit" value="Search"/>
+        </form>
+        <form action="/groceries/add/" method="post">
+            {% csrf_token %}
+            <div>
+                <div>
+                    <input type="date" name="purchaseDate"> (Purchase Date)
+                </div>
+                <div>
+                    <input type="date" name="ExpirationDate"> (Expiration Date)
+                </div>
+            </div>
+            <div>
+                <input type="number" name="memberID" placeholder="Member's ID">
+            </div>
+            <div>
+                <input type="text" name="ItemType" placeholder="Item Type">
+            </div>
+            <div>
+                <input type="text" name="groceryName" placeholder="Grocery Name">
+                <input type="number" step="0.01" name="unitPrice" placeholder="Unit Price">
+                <input type="number" step="0.01" name="quantity" placeholder="Quantity">
+                <select name="ItemUnit" id="unit">
+                    <option value="CTs">Count</option>
+                    <option value="OZs">Ounces</option>
+                    <option value="LBs">Pounds</option>
+                    <option value="Servings">Servings</option>
+                </select>
+            </div>
+            
+            <input class="btn btn-primary btn-sm mt-1 mb-1" type="submit" value="Add A New Grocery!"/>
+        </form>
+    </div>
+    <br>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Page two</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root2"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-    <h1> This is the Chores page </h1>
-    <ul id = "demo">
-    </ul>
-    <ul id = "prices"></ul>
-
-    <script>
-      var myJSON = `[
-                      {"name":"Lemons", "price":1.45, "Expiring in":"1 week"},
-                      {"name":"Coca-cola", "price":0.99, "Expiring in":"never"},                 
-                      {"name":"Ben & Jerry Ice Cream", "price":4.99, "Expiring in":"2 months if frozen"}
-
-                    ]`;
-      var obj = JSON.parse(myJSON);
-      var node = document.createElement("LI");
-
-      for (var elem = 0; elem < myJSON.length; elem++) {
-        //console.log(obj.name);
-        var textnode = document.createTextNode(obj[elem].name + ": ");
-        node.appendChild(textnode);
-        document.getElementById("demo").appendChild(node);
-
-        var pricenode = document.createTextNode("$" + obj[elem].price + ". ");
-        node.appendChild(pricenode);
-        document.getElementById("prices").appendChild(node);
-
-      }              
-
-      // var i;
-      // for(i = 0;i < myJSON.length; i++) {
-      //   var grocery = JSON.parse(myJSON)
-      //   console.log(grocery[i].name);
-      // }
-      // var myobj = JSON.parse(myJSON);
-      // document.getElementById("demo").innerHTML = myobj[0].name;
-      // document.getElementById("prices").innerHTML = myobj[0].price;
-      // console.log(myobj);
-
-    </script>
-  </body>
-</html>
+    {% for grocery in groceries %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ grocery.6 }}</a>
+              <small class="text-dark">{{ grocery.1 }}</small>
+              <small class="text-muted"> purchased on </small>
+              <small class="text-success">{{ grocery.4|date:"F d, Y" }}</small>
+            </div>
+            <h2>
+                <h3 class="article-title">
+                    {{ grocery.0 }}: ${{ grocery.9 }}
+                    <form action="/groceries/{{grocery.8}}/detail/" style="display: inline;"method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                    </form>
+                </h3>
+            </h2>
+            <small class='text-danger'>This item will be expired on {{ grocery.5|date:"F d, Y" }}</small>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

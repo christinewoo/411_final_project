@@ -12,7 +12,12 @@ urlpatterns = [
     path('groceries/<int:id>/update/', views.updateGrocery, name='groceries-update'),
     path('groceries/search/', views.searchGrocery, name='groceries-search_results'),
 
-    path('chores/', views.chores, name='dozenDuty_chores'),
+    path('chores/', views.chores, name='chores'),
+    path('chores/add/', views.addChores, name='chores-add'),
+    path('chores/<int:id>/detail/', views.detailChores, name='chores-detail'),
+    path('choress/<int:id>/remove/', views.removeChores, name='chores-remove'),
+    path('chores/<int:id>/update/', views.updateChores, name='chores-update'),
+    path('chores/search/', views.searchChores, name='chores-search_results'),
 
     path('members/', views.members, name='dozenDuty_members'),
     path('members/add/', views.addMember, name='members-add'),
