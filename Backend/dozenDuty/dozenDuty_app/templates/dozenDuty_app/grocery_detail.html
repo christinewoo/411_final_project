@@ -2,23 +2,64 @@
 {% block content %}
 <article class="media content-section">
     <div class="media-body">
-      <div class="article-metadata">
-        <a class="mr-2" href="#">{{ object.ItemType }}</a>
-        <small class="text-muted">{{ object.memberName }} purchased on {{ object.purchaseDate|date:"F d, Y" }}</small>
-      </div>
-      <div>
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'groceries-update' object.groceryID %}">Update</a>
-        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'groceries-delete' object.groceryID %}">Delete</a>
-      </div>
-      <h2 class="article-title">{{ object.groceryName }}</h2>
-      <h1 class="article-title">
-          {% widthratio object.unitPrice 1 object.quantity as total_price %}
-          ${{ total_price }}
-      </h1>
-      <p class="article-content">
-        Unit Price: ${{grocery.unitPrice}}
-        Quantity: ${{grocery.quantity}}
-    </p>
+        <div class="article-metadata">
+            <div>
+                <a class="mr-2" href="#">{{ groceries.6 }}</a>
+                <small class="text-dark">{{ groceries.1 }}</small>
+                <small class="text-muted"> purchased on </small>
+                <small class="text-success">{{ groceries.4|date:"F d, Y" }}</small>
+            </div>
+        </div>
+        <h1 class="article-title">
+            {{ groceries.0 }}: ${{ total_price }}
+            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'groceries' %}">Back to Groceries</a>
+        </h1>
+        <div>
+            <div>
+                Unit Price: ${{groceries.2}}
+            </div>
+            <div>
+                Quantity: {{groceries.3}} {{groceries.7}}
+            </div>
+            <small class='text-danger'>This item will be expired on {{ groceries.5|date:"F d, Y" }}</small>
+        </div>
+        <br>
+        <div>
+            <h4> Update this grocery: </h4>
+            <form action="/groceries/{{groceries.8}}/update" style="display: inline;" method="post">
+                {% csrf_token %}
+                <div>
+                    <div>
+                        <input type="date" name="purchaseDate"> (Purchase Date)
+                    </div>
+                    <div>
+                        <input type="date" name="ExpirationDate"> (Expiration Date)
+                    </div>
+                </div>
+                <div>
+                    <input type="number" name="memberID" placeholder="Member's ID">
+                </div>
+                <div>
+                    <input type="text" name="ItemType" placeholder="Item Type">
+                </div>
+                <div>
+                    <input type="text" name="groceriesName" placeholder="groceries Name">
+                    <input type="number" step="0.01" name="unitPrice" placeholder="Unit Price">
+                    <input type="number" step="0.01" name="quantity" placeholder="Quantity">
+                    <select name="ItemUnit" id="unit">
+                        <option value="CTs">Count</option>
+                        <option value="OZs">Ounces</option>
+                        <option value="LBs">Pounds</option>
+                        <option value="Servings">Servings</option>
+                    </select>
+                </div>
+                <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="Update!"/>
+            </form>
+            <form action="/groceries/{{groceries.8}}/remove/" style="display: inline;"method="post">
+                {% csrf_token %}
+                <input class="btn btn-danger btn-sm mt-1 mb-1" type="submit" value="Remove"/>
+            </form>
+        </div>
     </div>
   </article>
 {% endblock content %}

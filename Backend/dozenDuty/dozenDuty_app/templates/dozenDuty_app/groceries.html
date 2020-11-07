@@ -1,94 +1,64 @@
-l{% extends "dozenDuty_app/base.html" %}
+{% extends "dozenDuty_app/base.html" %}
 {% block content %}
     <div>
-        <h1> 
-            Groceries 
-            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'groceries-create' %}">Add A New Grocery!</a>
-        </h1>
+        <h1> Groceries </h1>
         <form action="{% url 'groceries-search_results' %}" method="get">
-            <input name="q" type="text" placeholder="Search Grocery...">
+            <input name="q" type="text" placeholder="Search In Grocery...">
+            <input class="btn btn-success btn-sm mt-1 mb-1" type="submit" value="Search"/>
         </form>
-        <br>
+        <form action="/groceries/add/" method="post">
+            {% csrf_token %}
+            <div>
+                <div>
+                    <input type="date" name="purchaseDate"> (Purchase Date)
+                </div>
+                <div>
+                    <input type="date" name="ExpirationDate"> (Expiration Date)
+                </div>
+            </div>
+            <div>
+                <input type="number" name="memberID" placeholder="Member's ID">
+            </div>
+            <div>
+                <input type="text" name="ItemType" placeholder="Item Type">
+            </div>
+            <div>
+                <input type="text" name="groceryName" placeholder="Grocery Name">
+                <input type="number" step="0.01" name="unitPrice" placeholder="Unit Price">
+                <input type="number" step="0.01" name="quantity" placeholder="Quantity">
+                <select name="ItemUnit" id="unit">
+                    <option value="CTs">Count</option>
+                    <option value="OZs">Ounces</option>
+                    <option value="LBs">Pounds</option>
+                    <option value="Servings">Servings</option>
+                </select>
+            </div>
+            
+            <input class="btn btn-primary btn-sm mt-1 mb-1" type="submit" value="Add A New Grocery!"/>
+        </form>
     </div>
+    <br>
+
     {% for grocery in groceries %}
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ grocery.ItemType }}</a>
-              <small class="text-muted">{{ grocery.memberName }} purchased on {{ grocery.purchaseDate|date:"F d, Y" }}</small>
+              <a class="mr-2" href="#">{{ grocery.6 }}</a>
+              <small class="text-dark">{{ grocery.1 }}</small>
+              <small class="text-muted"> purchased on </small>
+              <small class="text-success">{{ grocery.4|date:"F d, Y" }}</small>
             </div>
             <h2>
-                <a class="article-title" href="{% url 'groceries-detail' grocery.groceryID %}">{{ grocery.groceryName }}:</a>
-                {% widthratio grocery.unitPrice 1 grocery.quantity as total_price %}
-                ${{ total_price }}
+                <h3 class="article-title">
+                    {{ grocery.0 }}: ${{ grocery.9 }}
+                    <form action="/groceries/{{grocery.8}}/detail/" style="display: inline;"method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-secondary btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                    </form>
+                </h3>
             </h2>
+            <small class='text-danger'>This item will be expired on {{ grocery.5|date:"F d, Y" }}</small>
           </div>
         </article>
     {% endfor %}
-    <!-- <div>
-        <h1> Groceries </h1>
-    </div>
-
-    <div>
-        <p>I have bought some items. Their names and prices are: </p>
-        <ul id = "demo">
-        </ul>
-        <ul id = "prices"></ul>
-        <br>
-    </div>
-
-    <div>
-        <h3> Add grocery items to shopping list </h3>
-        <input type="text" name="" value="Item" id="item">
-        
-        <input type="text" name="" value="Quantity" id="quantity">
-    
-
-        <select id="unit">
-        <option value="ct">count</option>
-        <option value="oz">ounces</option>
-        <option value="lb">pounds</option>
-        <option value="servings">servings</option>
-        </select>
-
-    
-        <button onclick="addToList()" type="button" name="button" id="addButton">add</button>
-        <br>
-        <ul id="shoppinglist"></ul>
-    </div>
-    
-    <script>
-      var myJSON = `[
-                      {"name":"Lemons", "price":1.45, "Expiring in":"1 week"},
-                      {"name":"Coca-cola", "price":0.99, "Expiring in":"never"},                 
-                      {"name":"Ben & Jerry Ice Cream", "price":4.99, "Expiring in":"2 months if frozen"}
-
-                    ]`;
-      var obj = JSON.parse(myJSON);
-      var node = document.createElement("LI");
-
-      for (var elem = 0; elem < myJSON.length; elem++) {
-        //console.log(obj.name);
-        var textnode = document.createTextNode(obj[elem].name + ": ");
-        node.appendChild(textnode);
-        document.getElementById("demo").appendChild(node);
-
-        var pricenode = document.createTextNode("$" + obj[elem].price + ". ");
-        node.appendChild(pricenode);
-        document.getElementById("prices").appendChild(node);
-
-      }       
-
-      function addToList() {
-          let item = document.getElementById("item").value;
-          let quantity = document.getElementById("quantity").value;
-          let unit = document.getElementById("unit").value;
-
-          let li = document.createElement("li");
-          li.textContent = item + ' ' + quantity + ' ' + unit + '.';
-          document.getElementById("shoppinglist").appendChild(li);
-      }
-
-
-    </script> -->
 {% endblock content %}

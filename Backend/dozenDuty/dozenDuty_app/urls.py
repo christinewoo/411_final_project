@@ -1,27 +1,22 @@
 from django.urls import path
-from .views import(
-    GroceryListView,
-    GroceryDetailView,
-    GroceryCreateView,
-    GroceryUpdateView,
-    GroceryDeleteView,
-    GrocerySearchResultsView,
-)
 from . import views
 
 
 urlpatterns = [
     path('', views.main, name='dozenDuty_main'),
-    path('groceries/', GroceryListView.as_view(), name='groceries'),
-    path('groceries/<int:pk>/', GroceryDetailView.as_view(), name='groceries-detail'),
-    path('groceries/new/', GroceryCreateView.as_view(), name='groceries-create'),
-    path('groceries/<int:pk>/update/', GroceryUpdateView.as_view(), name='groceries-update'),
-    path('groceries/<int:pk>/delete/', GroceryDeleteView.as_view(), name='groceries-delete'),
-    path('groceries/search/', GrocerySearchResultsView.as_view(), name='groceries-search_results'),
+
+    path('groceries/', views.groceries, name='groceries'),
+    path('groceries/add/', views.addGrocery, name='groceries-add'),
+    path('groceries/<int:id>/detail/', views.detailGrocery, name='groceries-detail'),
+    path('groceries/<int:id>/remove/', views.removeGrocery, name='groceries-remove'),
+    path('groceries/<int:id>/update/', views.updateGrocery, name='groceries-update'),
+    path('groceries/search/', views.searchGrocery, name='groceries-search_results'),
+
     path('chores/', views.chores, name='dozenDuty_chores'),
+
     path('members/', views.members, name='dozenDuty_members'),
-    path('addMember/', views.addMember, name='members-add'),
-    path('removeMember/<int:id>/', views.removeMember, name='members-remove'),
-    path('updateMember/<int:id>/', views.updateMember, name='members-update'),
-    path('searchMember/', views.searchMember, name='members-search_results'),
+    path('members/add/', views.addMember, name='members-add'),
+    path('members/<int:id>/remove/', views.removeMember, name='members-remove'),
+    path('members/<int:id>/update/', views.updateMember, name='members-update'),
+    path('members/search/', views.searchMember, name='members-search_results'),
 ]

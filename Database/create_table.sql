@@ -1,6 +1,6 @@
-CREATE database test;
+CREATE database dozenduty_new;
 
-use test;
+use dozenduty_new;
 
 CREATE TABLE dozenDuty_app_member(
 	memberID 	INT unsigned AUTO_INCREMENT, 
@@ -21,10 +21,11 @@ CREATE TABLE dozenDuty_app_grocery(
     groceryName VARCHAR(40),
 	memberID	INT unsigned, 
 	unitPrice	REAL unsigned, 
-	quantity	INT unsigned DEFAULT 0, 
+	quantity	REAL unsigned DEFAULT 0, 
 	purchaseDate	DATE NOT NULL, 
 	ExpirationDate	DATE, 
 	ItemType	VARCHAR(20),
+    ItemUnit    VARCHAR(10),
 	PRIMARY KEY (groceryID),
 	FOREIGN KEY (memberID) REFERENCES dozenDuty_app_member(memberID)
 );
@@ -65,3 +66,6 @@ CREATE TABLE dozenDuty_app_does(
 	FOREIGN KEY (choreID) REFERENCES dozenDuty_app_chore(choreID),
 	FOREIGN KEY (homeID) REFERENCES dozenDuty_app_home(homeID)
 );
+
+GRANT ALL ON dozenDuty_new.* TO 'djangouser'@'%';
+FLUSH PRIVILEGES;

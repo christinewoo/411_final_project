@@ -1,29 +1,31 @@
 {% extends "dozenDuty_app/base.html" %}
 {% block content %}
     <div>
-        <h1>Members</h1>
+        <h2>Search Results of "{{name}}" in Members</h2>
+    </div>
+    <div>
         <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'dozenDuty_members' %}">Clear Search</a>
     </div>
+    <br>
     <div>
-        <h2> Search Results of {{name}} </h2>
-    </div>
-    <div>
-        <ul>
-            {% for member in members %}
-                <li>{{ member }}
-                    <form action="/removeMember/{{member.memberID}}/" 
-                          style="display: inline;"
-                          method="post">
-                    {% csrf_token %}
-                        <input type="submit" value="Remove"/>
-                    </form>
-                    <form action="/updateMember/{{member.memberID}}/" style="display: inline;" method="post">
+        {% for member in members %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <p class="mr-2">Member ID: {{ member.0 }}</p>
+                    </div>
+                    <h3 class="article-title">{{ member.1 }}</h3>
+                    <form action="/members/{{member.0}}/update/" style="display: inline;" method="post">
                         {% csrf_token %}
-                        <input type="text" name="memberName"/>
-                        <input type="submit" value="update"/>
+                        <input class="article-title"type="text" name="memberName"/>
+                        <input class="btn btn-secondary btn-sm mt-1 mb-1" type="submit" value="Update"/>
                     </form>
-                </li>
-              {% endfor %}
-        </ul>
+                    <form action="/members/{{member.0}}/remove/" style="display: inline;"method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-danger btn-sm mt-1 mb-1" type="submit" value="Remove"/>
+                    </form>
+                </div>
+            </article>
+        {% endfor %}
     </div>
 {% endblock content %}

@@ -1,24 +1,31 @@
 {% extends "dozenDuty_app/base.html" %}
 {% block content %}
     <div>
-        <h1> 
-            Groceries 
-            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'groceries' %}">Clear Search</a>
-        </h1>
-        
+        <h2>Search Results of "{{name}}" in Groceries</h2>
     </div>
-    {% for grocery in object_list %}
+    <div>
+        <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'groceries' %}">Clear Search</a>
+    </div>
+    <br>
+    {% for grocery in groceries %}
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ grocery.ItemType }}</a>
-              <small class="text-muted">{{ grocery.memberName }} purchased on {{ grocery.purchaseDate|date:"F d, Y" }}</small>
+              <a class="mr-2" href="#">{{ grocery.6 }}</a>
+              <small class="text-dark">{{ grocery.1 }}</small>
+              <small class="text-muted"> purchased on </small>
+              <small class="text-success">{{ grocery.4|date:"F d, Y" }}</small>
             </div>
             <h2>
-                <a class="article-title" href="{% url 'groceries-detail' grocery.groceryID %}">{{ grocery.groceryName }}:</a>
-                {% widthratio grocery.unitPrice 1 grocery.quantity as total_price %}
-                ${{ total_price }}
+                <h3 class="article-title">
+                    {{ grocery.0 }}: ${{ grocery.9 }}
+                    <form action="/groceries/{{grocery.8}}/detail/" style="display: inline;"method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-secondary btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                    </form>
+                </h3>
             </h2>
+            <small class='text-danger'>This item will be expired on {{ grocery.5|date:"F d, Y" }}</small>
           </div>
         </article>
     {% endfor %}
