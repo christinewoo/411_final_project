@@ -30,10 +30,10 @@
                 {% csrf_token %}
                 <div>
                     <div>
-                        <input type="date" name="purchaseDate"> (Purchase Date)
+                        <input type="date" name="purchaseDate" value="{{groceries.4|date:'c'}}"> (Purchase Date)
                     </div>
                     <div>
-                        <input type="date" name="ExpirationDate"> (Expiration Date)
+                        <input type="date" name="ExpirationDate" value="{{groceries.5|date:'c'}}"> (Expiration Date)
                     </div>
                 </div>
                 <div>

@@ -2,8 +2,8 @@
 {% block content %}
     <div>
         <h1> Chores </h1>
-        <form action="{% url 'groceries-search_results' %}" method="get">
-            <input name="q" type="text" placeholder="Search In Grocery...">
+        <!-- <form action="{% url 'groceries-search_results' %}" method="get">
+            <input name="q" type="text" placeholder="Search In Chores...">
             <input class="btn btn-success btn-sm mt-1 mb-1" type="submit" value="Search"/>
         </form>
         <form action="/groceries/add/" method="post">
@@ -60,5 +60,6 @@
             <small class='text-danger'>This item will be expired on {{ grocery.5|date:"F d, Y" }}</small>
           </div>
         </article>
-    {% endfor %}
+    {% endfor %} -->
+</div>
 {% endblock content %}
