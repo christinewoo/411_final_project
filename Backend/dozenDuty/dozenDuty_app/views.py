@@ -1,9 +1,5 @@
 from django.shortcuts import render
 from django.db import connection
-from .models import(
-    Grocery,
-    Member,
-)
 from django.http import HttpResponseRedirect
 
 """ Main Page """
