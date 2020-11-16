@@ -1,0 +1,32 @@
+{% extends "dozenDuty_app/base.html" %}
+{% block content %}
+    <div>
+        <h2>Search Results of "{{name}}" in Chores</h2>
+    </div>
+    <div>
+        <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'chores' %}">Clear Search</a>
+    </div>
+    <br>
+    {% for chore in chores %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ chore.1 }}</a>
+              <small class="text-dark">{{ chore.2 }}</small>
+              <small class="text-muted"> assigned on </small>
+              <small class="text-success">{{ chore.3|date:"F d, Y" }}</small>
+            </div>
+            <h2>
+                <h3 class="article-title">
+                    Status of {{ chore.1 }}: {{ chore.5 }}
+                    <form action="/chores/{{chore.0}}/detail/" style="display: inline;"method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                    </form>
+                </h3>
+            </h2>
+            <small class='text-danger'>This item should be done by {{ chore.4|date:"F d, Y" }}</small>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
