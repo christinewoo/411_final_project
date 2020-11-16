@@ -71,23 +71,23 @@ def searchGrocery(request):
 def chores(request):
     # return render(request, 'dozenDuty_app/chores.html',{'title':'Chores'})
     with connection.cursor() as cursor:
-        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID ORDER BY c.dueDate ASC")
+        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID ORDER BY c.dueDate ASC")
         chores = cursor.fetchall()
     return render(request, 'dozenDuty_app/chores.html',{'title':'Chores','chores': chores})
 
 def detailChores(request, id):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.choreID=%s",[id])
+        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.choreID=%s",[id])
         chore = cursor.fetchone()
-    return render(request, 'dozenDuty_app/grocery_detail.html',{'title':'Chores','chore': chore})
+    return render(request, 'dozenDuty_app/chores_detail.html',{'title':'Chores','chore': chore})
 
 def addChores(request):
-    chore_name = request.POST['choreName']
-    member_id = request.POST['memberID']
+    assign_date = request.POST['assignDate']
     due_date = request.POST['dueDate']
-    Status = request.POST['status']
+    member_id = request.POST['memberID']
+    chore_name = request.POST['choreName']
     with connection.cursor() as cursor:
-        cursor.execute('INSERT INTO dozenDuty_app_chore (memberID,name,dueDate,status) VALUES(%s,%s,%s,%s)',[member_id,chore_name,due_date,Status])
+        cursor.execute('INSERT INTO dozenDuty_app_chore (memberID,name,assignDate,dueDate) VALUES(%s,%s,%s,%s)',[member_id,chore_name,assign_date,due_date])
     return HttpResponseRedirect('/chores/')
 
 def removeChores(request, id):
@@ -96,22 +96,32 @@ def removeChores(request, id):
     return HttpResponseRedirect('/chores/')
 
 def updateChores(request, id):
+    assign_date = request.POST['assignDate']
     chore_name = request.POST['choreName']
     member_id = request.POST['memberID']
     due_date = request.POST['dueDate']
-    Status = request.POST['status']
+    cur_status = request.POST['status']
     with connection.cursor() as cursor:
-        cursor.execute('UPDATE dozenDuty_app_chroe SET name=%s,memberID=%s,dueDate=%s,status=%s WHERE choreID=%s',[chore_name,member_id,due_date,Status,id])
-    chore_detail_url = '/chroes/' + str(id) + '/detail/'
+        if assign_date is not '':
+            cursor.execute('UPDATE dozenDuty_app_chore SET assignDate=%s WHERE choreID=%s',[assign_date,id])
+        if chore_name is not '':
+            cursor.execute('UPDATE dozenDuty_app_chore SET name=%s WHERE choreID=%s',[chore_name,id])
+        if member_id is not '':
+            cursor.execute('UPDATE dozenDuty_app_chore SET memberID=%s WHERE choreID=%s',[member_id,id])
+        if due_date is not '':
+            cursor.execute('UPDATE dozenDuty_app_chore SET dueDate=%s WHERE choreID=%s',[due_date,id])
+        if cur_status is not '':
+            cursor.execute('UPDATE dozenDuty_app_chore SET status=%s WHERE choreID=%s',[cur_status,id])
+    chore_detail_url = '/chores/' + str(id) + '/detail/'
     return HttpResponseRedirect(chore_detail_url)
 
 def searchChores(request):
     name = request.GET.get('q')
     search_key = '%' + name + '%'
     with connection.cursor() as cursor:
-        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.choreName LIKE %s or m.memberName LIKE %s ORDER BY c.dueDate ASC",[search_key,search_key])
+        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.name LIKE %s or m.memberName LIKE %s ORDER BY c.dueDate ASC",[search_key,search_key])
         chores = cursor.fetchall()
-    return render(request, 'dozenDuty_app/chore_search_results.html', {'title':'Chores','chroes': chores, 'name': name})
+    return render(request, 'dozenDuty_app/chores_search_results.html', {'title':'Chores','chores': chores, 'name': name})
 
 
 """ Members Page """

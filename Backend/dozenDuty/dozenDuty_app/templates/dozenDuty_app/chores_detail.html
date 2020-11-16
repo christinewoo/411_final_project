@@ -1,0 +1,55 @@
+{% extends "dozenDuty_app/base.html" %}
+{% block content %}
+
+<!-- c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status -->
+
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <div>
+                <a class="mr-2" href="#">{{ chore.1 }}</a>
+                <small class="text-dark">{{ chore.2 }}</small>
+                <small class="text-muted"> purchased on </small>
+                <small class="text-success">{{ chore.3|date:"F d, Y" }}</small>
+            </div>
+        </div>
+        <h1 class="article-title">
+            Status of {{ chore.1 }}: {{ chore.5 }}
+            <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'chores' %}">Back to Chores</a>
+        </h1>
+        <div>
+            <small class='text-danger'>This item should be done by {{ chore.4|date:"F d, Y" }}</small>
+        </div>
+        <br>
+        <div>
+            <h4> Update this chore: </h4>
+            <form action="/chores/{{chore.0}}/update/" style="display: inline;" method="post">
+                {% csrf_token %}
+                <div>
+                    <div>
+                        <input type="date" name="assignDate"> (Date Assigned)
+                    </div>
+                    <div>
+                        <input type="date" name="dueDate"> (Due Date)
+                    </div>
+                </div>               
+                <div>
+                    <input type="number" name="memberID" placeholder="Member's ID">
+                </div>
+                <div>
+                    <input type="text" name="choreName" placeholder="Chore Name">
+                </div>
+                <div>
+                    <input type="text" name="status" placeholder="Status of Chore">
+                </div>
+                <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="Update"/>
+            </form>
+            
+            <form action="/chores/{{chore.0}}/remove/" style="display: inline;"method="post">
+                {% csrf_token %}
+                <input class="btn btn-danger btn-sm mt-1 mb-1" type="submit" value="Remove"/>
+            </form>
+        </div>
+    </div>
+  </article>
+{% endblock content %}

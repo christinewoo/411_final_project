@@ -9,10 +9,10 @@ CREATE TABLE dozenDuty_app_member(
 );
 
 CREATE TABLE dozenDuty_app_home(
-	homeID 	INT unsigned AUTO_INCREMENT, 
+	homeID 		INT unsigned AUTO_INCREMENT, 
 	memberID 	INT unsigned,
 	homeName	VARCHAR(20) NOT NULL ,
-	PRIMARY KEY(homeID, memberID),
+	PRIMARY KEY (homeID, memberID),
 	FOREIGN KEY (memberID) REFERENCES dozenDuty_app_member(memberID)
 );
 
@@ -31,12 +31,13 @@ CREATE TABLE dozenDuty_app_grocery(
 );
 
 CREATE TABLE dozenDuty_app_chore(
-	choreID	INT unsigned AUTO_INCREMENT, 
+	choreID		INT unsigned AUTO_INCREMENT, 
 	memberID	INT unsigned, 
 	name		VARCHAR(20), 
-	dueDate	DATE NOT NULL, 
-	status		VARCHAR(5), 
-	steps		INT NOT NULL DEFAULT 1,
+	assignDate	DATE NOT NULL,
+	dueDate		DATE NOT NULL, 
+	status		VARCHAR(15) DEFAULT 'NOT STARTED', 
+	steps		INT  DEFAULT 1,
 	PRIMARY KEY  (choreID),
 	FOREIGN KEY  (memberID) REFERENCES dozenDuty_app_member(memberID)
 );
@@ -56,8 +57,6 @@ CREATE TABLE dozenDuty_app_shop(
 	FOREIGN KEY (groceryID) REFERENCES dozenDuty_app_grocery(groceryID),
 	FOREIGN KEY (homeID) REFERENCES dozenDuty_app_home(homeID)
 );
-
-
 
 CREATE TABLE dozenDuty_app_does(
 	choreID	INT unsigned AUTO_INCREMENT,
