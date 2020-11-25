@@ -98,6 +98,62 @@ CREATE TRIGGER create_debts
             END IF;
             UNTIL done
         END Repeat;
+        close cur;
+    END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER update_debts
+    AFTER INSERT ON dozenduty_app_grocery
+    FOR EACH ROW
+    BEGIN
+        Declare done1 int default 0;
+        Declare lender  INT;
+        -- Declare num_members int default 1;
+        Declare cur1 cursor for SELECT DISTINCT memberID FROM dozenDuty_app_grocery;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done1 = 1;
+
+        SET @num_members = (SELECT count(distinct memberID) FROM dozenDuty_app_member);
+
+        Open cur1;
+        
+        Repeat
+            FETCH cur1 into lender;
+            
+            BEGIN
+                Declare done2 int default 0;
+                Declare borrower INT;
+                Declare cur2 cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
+                Declare CONTINUE HANDLER FOR NOT FOUND SET done2 = 1;
+                
+                
+                
+                open cur2;
+
+                Repeat
+                    FETCH cur2 into borrower;
+
+                    IF borrower<>lender THEN
+                        UPDATE dozenDuty_app_money
+                        SET amount= amount + (new.unitPrice * new.quantity / @num_members)
+                        WHERE borrowerID=borrower AND lenderID=lender;
+                        UPDATE dozenDuty_app_money
+                        SET amount= amount + (-1.0) * (new.unitPrice * new.quantity / @num_members)
+                        WHERE borrowerID=lender AND lenderID=borrower;
+                    END IF;
+                
+                    UNTIL done2
+                END Repeat;
+                
+                close cur2;
+            
+            END;
+            
+            UNTIL done1
+        END Repeat;
+        
+        close cur1;
+    
     END //
 DELIMITER ;
 
@@ -120,6 +176,7 @@ CREATE TRIGGER delete_debts
             END IF;
             UNTIL done
         END Repeat;
+        close cur;
     END //
 DELIMITER ;
 
