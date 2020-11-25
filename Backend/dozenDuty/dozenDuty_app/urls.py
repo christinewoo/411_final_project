@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.main, name='dozenDuty_main'),
 
-    """Groceries"""
+    # Groceries
     path('groceries/', views.groceries, name='groceries'),
     path('groceries/add/', views.addGrocery, name='groceries-add'),
     path('groceries/<int:id>/detail/', views.detailGrocery, name='groceries-detail'),
@@ -13,7 +13,7 @@ urlpatterns = [
     path('groceries/<int:id>/update/', views.updateGrocery, name='groceries-update'),
     path('groceries/search/', views.searchGrocery, name='groceries-search_results'),
 
-    """Chores"""
+    # Chores
     path('chores/', views.chores, name='chores'),
     path('chores/add/', views.addChores, name='chores-add'),
     path('chores/<int:id>/detail/', views.detailChores, name='chores-detail'),
@@ -21,7 +21,7 @@ urlpatterns = [
     path('chores/<int:id>/update/', views.updateChores, name='chores-update'),
     path('chores/search/', views.searchChores, name='chores-search_results'),
     
-    """Members"""
+    # Members
     path('members/', views.members, name='dozenDuty_members'),
     path('members/add/', views.addMember, name='members-add'),
     path('members/<int:id>/remove/', views.removeMember, name='members-remove'),

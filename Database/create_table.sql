@@ -8,10 +8,20 @@ CREATE TABLE dozenDuty_app_member(
 	PRIMARY KEY (memberID)
 );
 
+CREATE TABLE dozenDuty_app_money(
+    moneyID     INT unsigned AUTO_INCREMENT,
+    borrowerID  INT unsigned NOT NULL,
+    lenderID    INT unsigned NOT NULL,
+    amount      REAL NOT NULL DEFAULT 0,
+    PRIMARY KEY (moneyID),
+    FOREIGN KEY (borrowerID) REFERENCES dozenDuty_app_member(memberID),
+    FOREIGN KEY (lenderID) REFERENCES dozenDuty_app_member(memberID)
+);
+
 CREATE TABLE dozenDuty_app_home(
 	homeID 		INT unsigned AUTO_INCREMENT, 
 	memberID 	INT unsigned,
-	homeName	VARCHAR(20) NOT NULL ,
+	homeName	VARCHAR(20) NOT NULL,
 	PRIMARY KEY (homeID, memberID),
 	FOREIGN KEY (memberID) REFERENCES dozenDuty_app_member(memberID)
 );
@@ -37,7 +47,7 @@ CREATE TABLE dozenDuty_app_chore(
 	assignDate	DATE NOT NULL,
 	dueDate		DATE NOT NULL, 
 	status		VARCHAR(15) DEFAULT 'NOT STARTED', 
-	steps		INT  DEFAULT 1,
+	weight		INT  DEFAULT 3,
 	PRIMARY KEY  (choreID),
 	FOREIGN KEY  (memberID) REFERENCES dozenDuty_app_member(memberID)
 );
@@ -65,6 +75,54 @@ CREATE TABLE dozenDuty_app_does(
 	FOREIGN KEY (choreID) REFERENCES dozenDuty_app_chore(choreID),
 	FOREIGN KEY (homeID) REFERENCES dozenDuty_app_home(homeID)
 );
+
+DELIMITER //
+CREATE TRIGGER create_debts
+    AFTER INSERT ON dozenduty_app_member
+    FOR EACH ROW
+    BEGIN
+        Declare done int default 0;
+        Declare new_id INT;
+        Declare cur cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        
+        Open cur;
+        
+        Repeat
+            FETCH cur into new_id;
+            IF new_id<>new.memberID AND new_id IS NOT NULL THEN
+                INSERT INTO dozenDuty_app_money (borrowerID,lenderID)
+                VALUES(new.memberID,new_id);
+                INSERT INTO dozenDuty_app_money (borrowerID,lenderID)
+                VALUES(new_id,new.memberID);
+            END IF;
+            UNTIL done
+        END Repeat;
+    END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER delete_debts
+    BEFORE DELETE ON dozenduty_app_member
+    FOR EACH ROW
+    BEGIN
+        Declare done int default 0;
+        Declare delete_id INT;
+        Declare cur cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        
+        Open cur;
+        
+        Repeat
+            FETCH cur into delete_id;
+            IF delete_id=old.memberID THEN
+                DELETE FROM dozenDuty_app_money WHERE borrowerID=delete_id or lenderID=delete_id;
+            END IF;
+            UNTIL done
+        END Repeat;
+    END //
+DELIMITER ;
+
 
 GRANT ALL ON dozenDuty_new.* TO 'djangouser'@'%';
 FLUSH PRIVILEGES;

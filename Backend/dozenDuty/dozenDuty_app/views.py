@@ -127,7 +127,7 @@ def searchChores(request):
 """ Members Page """
 def members(request):
     with connection.cursor() as cursor:
-        cursor.execute(" SELECT * FROM dozenDuty_app_member ")
+        cursor.execute(" SELECT * FROM dozenDuty_app_member")
         members = cursor.fetchall()
     return render(request, 'dozenDuty_app/members.html', {'title':'Members','members': members})
 
@@ -155,3 +155,4 @@ def searchMember(request):
         cursor.execute(" SELECT * FROM dozenDuty_app_member WHERE memberName LIKE %s ",[search_key])
         members = cursor.fetchall()
     return render(request, 'dozenDuty_app/members_search_results.html', {'title':'Members','members': members, 'name': name})
+
