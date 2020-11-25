@@ -131,6 +131,12 @@ def members(request):
         members = cursor.fetchall()
     return render(request, 'dozenDuty_app/members.html', {'title':'Members','members': members})
 
+def detailMember(request, id):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT m.memberId, m.memberName, mo.moneyID, mo.borrowerID, mo.lenderID, mo.amount FROM dozenDuty_app_member as m LEFT JOIN dozenDuty_app_money as mo on m.memberID=mo.borrowerID WHERE m.memberID=%s",[id])
+        member = cursor.fetchone()
+    return render(request, 'dozenDuty_app/members_detail.html',{'title':'Members','member': member})
+
 def addMember(request):
     name = request.POST['memberName']
     with connection.cursor() as cursor:

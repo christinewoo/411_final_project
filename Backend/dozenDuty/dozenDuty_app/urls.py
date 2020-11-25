@@ -22,8 +22,9 @@ urlpatterns = [
     path('chores/search/', views.searchChores, name='chores-search_results'),
     
     # Members
-    path('members/', views.members, name='dozenDuty_members'),
+    path('members/', views.members, name='members'),
     path('members/add/', views.addMember, name='members-add'),
+    path('members/<int:id>/detail/', views.detailMember, name='members-detail'),
     path('members/<int:id>/remove/', views.removeMember, name='members-remove'),
     path('members/<int:id>/update/', views.updateMember, name='members-update'),
     path('members/search/', views.searchMember, name='members-search_results'),

@@ -22,16 +22,12 @@
                     <div class="article-metadata">
                         <p class="mr-2">Member ID: {{ member.0 }}</p>
                     </div>
-                    <h3 class="article-title">{{ member.1 }}</h3>
-                    <form action="/members/{{member.0}}/update/" style="display: inline;" method="post">
-                        {% csrf_token %}
-                        <input class="article-title"type="text" name="memberName"/>
-                        <input class="btn btn-secondary btn-sm mt-1 mb-1" type="submit" value="Update"/>
-                    </form>
-                    <form action="/members/{{member.0}}/remove/" style="display: inline;"method="post">
-                        {% csrf_token %}
-                        <input class="btn btn-danger btn-sm mt-1 mb-1" type="submit" value="Remove"/>
-                    </form>
+                    <h3 class="article-title">{{ member.1 }}
+                        <form action="/members/{{member.0}}/detail/" style="display: inline;"method="post">
+                            {% csrf_token %}
+                            <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                        </form>
+                    </h3>
                 </div>
             </article>
         {% endfor %}
