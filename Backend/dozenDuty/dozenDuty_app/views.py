@@ -129,14 +129,20 @@ def searchChores(request):
 """ Members Page """
 def members(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID GROUP BY mo.borrowerID, m.memberName") 
+        cursor.execute("SELECT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID GROUP BY mo.borrowerID, m.memberName") 
         temp = cursor.fetchall()
-    members = list(temp)
-    for i in range(len(members)):
-        if members[i][2] == 0:
-            members[i] = (members[i][0], members[i][1], round(members[i][2], 2))
-        else:
-            members[i] = (members[i][0], members[i][1], round(members[i][2]*(-1), 2))
+        cursor.execute("SELECT * FROM dozenDuty_app_member") 
+        one_member = cursor.fetchone()
+    members = []
+    if len(temp) == 0:
+        members.append((one_member[0], one_member[1], 0.00))
+    else:
+        members = list(temp)
+        for i in range(len(temp)):
+            if members[i][2] == 0:
+                members[i] = (members[i][0], members[i][4], round(members[i][2], 2))
+            else:
+                members[i] = (members[i][0], members[i][4], round(members[i][2]*(-1), 2))
     return render(request, 'dozenDuty_app/members.html', {'title':'Members','members': members})
 
 def detailMember(request, id):
@@ -180,11 +186,17 @@ def searchMember(request):
     search_key = '%' + name + '%'
     with connection.cursor() as cursor:
         cursor.execute(" SELECT DISTINCT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID WHERE memberName LIKE %s GROUP BY mo.borrowerID, m.memberName",[search_key])
-        members = cursor.fetchall()
-    members = list(members)
-    for i in range(len(members)):
-        if members[i][2] == 0:
-            members[i] = (members[i][0], members[i][1], round(members[i][2], 2))
-        else:
-            members[i] = (members[i][0], members[i][1], round(members[i][2]*(-1), 2))
+        temp = cursor.fetchall()
+        cursor.execute("SELECT * FROM dozenDuty_app_member WHERE memberName LIKE %s",[search_key]) 
+        one_member = cursor.fetchone()
+    members = []
+    if len(temp) == 0:
+        members.append((one_member[0], one_member[1], 0.00))
+    else:
+        members = list(temp)
+        for i in range(len(temp)):
+            if members[i][2] == 0:
+                members[i] = (members[i][0], members[i][4], round(members[i][2], 2))
+            else:
+                members[i] = (members[i][0], members[i][4], round(members[i][2]*(-1), 2))
     return render(request, 'dozenDuty_app/members_search_results.html', {'title':'Members','members': members, 'name': name})
