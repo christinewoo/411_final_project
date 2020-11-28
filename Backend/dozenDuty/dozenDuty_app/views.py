@@ -33,7 +33,7 @@ def addGrocery(request):
     item_type = request.POST['ItemType']
     item_unit = request.POST['ItemUnit']
     with connection.cursor() as cursor:
-        cursor.execute('INSERT INTO dozenDuty_app_grocery (groceryName,memberID,unitPrice,quantity,purchaseDate,ExpirationDate,ItemType,ItemUnit) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',[grocery_name,member_id,unit_price,Quantity,purchase_date,expiration_date,item_type,item_unit])
+        cursor.execute('INSERT INTO dozenDuty_app_grocery (groceryName,memberID,unitPrice,quantity,purchaseDate,ExpirationDate,ItemType,ItemUnit,numMember) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,(SELECT count(distinct memberID) FROM dozenDuty_app_member))',[grocery_name,member_id,unit_price,Quantity,purchase_date,expiration_date,item_type,item_unit])
     return HttpResponseRedirect('/groceries/')
 
 def removeGrocery(request, id):
@@ -51,7 +51,9 @@ def updateGrocery(request, id):
     item_type = request.POST['ItemType']
     item_unit = request.POST['ItemUnit']
     with connection.cursor() as cursor:
-        cursor.execute('UPDATE dozenDuty_app_grocery SET groceryName=%s,memberID=%s,unitPrice=%s,quantity=%s,purchaseDate=%s,ExpirationDate=%s,ItemType=%s,ItemUnit=%s WHERE groceryID=%s',[grocery_name,member_id,unit_price,Quantity,purchase_date,expiration_date,item_type,item_unit,id])
+        cursor.execute('SELECT count(distinct memberID) FROM dozenDuty_app_member');
+        numMember=cursor.fetchone();
+        cursor.execute('UPDATE dozenDuty_app_grocery SET groceryName=%s,memberID=%s,unitPrice=%s,quantity=%s,purchaseDate=%s,ExpirationDate=%s,ItemType=%s,ItemUnit=%s, numMember=%s WHERE groceryID=%s',[grocery_name,member_id,unit_price,Quantity,purchase_date,expiration_date,item_type,item_unit,numMember[0],id])
     grocery_detail_url = '/groceries/' + str(id) + '/detail/'
     return HttpResponseRedirect(grocery_detail_url)
 
@@ -127,15 +129,34 @@ def searchChores(request):
 """ Members Page """
 def members(request):
     with connection.cursor() as cursor:
-        cursor.execute(" SELECT * FROM dozenDuty_app_member")
-        members = cursor.fetchall()
+        cursor.execute("SELECT DISTINCT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID GROUP BY mo.borrowerID, m.memberName") 
+        temp = cursor.fetchall()
+    members = list(temp)
+    for i in range(len(members)):
+        if members[i][2] == 0:
+            members[i] = (members[i][0], members[i][1], round(members[i][2], 2))
+        else:
+            members[i] = (members[i][0], members[i][1], round(members[i][2]*(-1), 2))
     return render(request, 'dozenDuty_app/members.html', {'title':'Members','members': members})
 
 def detailMember(request, id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT m.memberId, m.memberName, mo.moneyID, mo.borrowerID, mo.lenderID, mo.amount FROM dozenDuty_app_member as m LEFT JOIN dozenDuty_app_money as mo on m.memberID=mo.borrowerID WHERE m.memberID=%s",[id])
-        member = cursor.fetchone()
-    return render(request, 'dozenDuty_app/members_detail.html',{'title':'Members','member': member})
+        cur_member = cursor.fetchone()
+        cursor.execute("SELECT DISTINCT * FROM dozenDuty_app_member")
+        lookup = cursor.fetchall()
+        cursor.execute("SELECT DISTINCT * FROM dozenDuty_app_money mo WHERE mo.borrowerID=%s",[id])
+        all_debts = cursor.fetchall()
+    debts = list(all_debts)
+    lookup = list(lookup)
+    for i in range(len(debts)):
+        for j in range(len(lookup)):
+            if (all_debts[i][1] is lookup[j][0]):
+                debts[i] = (all_debts[i][0], lookup[j][1], all_debts[i][2], round(all_debts[i][3],2))
+        for k in range(len(lookup)):
+            if (all_debts[i][2] is lookup[k][0]):
+                debts[i] = (all_debts[i][0], debts[i][1], lookup[k][1], round(all_debts[i][3],2)) 
+    return render(request, 'dozenDuty_app/members_detail.html',{'title':'Members','member': cur_member, 'debts': debts})
 
 def addMember(request):
     name = request.POST['memberName']
@@ -158,7 +179,12 @@ def searchMember(request):
     name = request.GET.get('q')
     search_key = '%' + name + '%'
     with connection.cursor() as cursor:
-        cursor.execute(" SELECT * FROM dozenDuty_app_member WHERE memberName LIKE %s ",[search_key])
+        cursor.execute(" SELECT DISTINCT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID WHERE memberName LIKE %s GROUP BY mo.borrowerID, m.memberName",[search_key])
         members = cursor.fetchall()
+    members = list(members)
+    for i in range(len(members)):
+        if members[i][2] == 0:
+            members[i] = (members[i][0], members[i][1], round(members[i][2], 2))
+        else:
+            members[i] = (members[i][0], members[i][1], round(members[i][2]*(-1), 2))
     return render(request, 'dozenDuty_app/members_search_results.html', {'title':'Members','members': members, 'name': name})
-

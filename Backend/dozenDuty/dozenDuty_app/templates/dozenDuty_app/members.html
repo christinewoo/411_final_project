@@ -20,7 +20,7 @@
             <article class="media content-section">
                 <div class="media-body">
                     <div class="article-metadata">
-                        <p class="mr-2">Member ID: {{ member.0 }}</p>
+                        <small class="mr-2">Member ID: {{ member.0 }}</small>
                     </div>
                     <h3 class="article-title">{{ member.1 }}
                         <form action="/members/{{member.0}}/detail/" style="display: inline;"method="post">
@@ -28,6 +28,21 @@
                             <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
                         </form>
                     </h3>
+                    <div>
+                        {% if member.2 < 0 %}
+                            <small class='text-danger'>
+                                Current Balance: ${{ member.2 }}
+                            </small>
+                        {% elif member.2 == 0 %}
+                            <small class='text-success'>
+                                Current Balance: ${{ member.2 }}0
+                            </small>
+                        {% else %}
+                            <small class='text-success'>
+                                Current Balance: ${{ member.2 }}
+                            </small>
+                        {% endif %}
+                    </div>
                 </div>
             </article>
         {% endfor %}

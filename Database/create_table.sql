@@ -31,7 +31,8 @@ CREATE TABLE dozenDuty_app_grocery(
     groceryName VARCHAR(40),
 	memberID	INT unsigned, 
 	unitPrice	REAL unsigned, 
-	quantity	REAL unsigned DEFAULT 0, 
+	quantity	REAL unsigned DEFAULT 0,
+    numMember   INT unsigned DEFAULT 1, 
 	purchaseDate	DATE NOT NULL, 
 	ExpirationDate	DATE, 
 	ItemType	VARCHAR(20),
@@ -77,7 +78,30 @@ CREATE TABLE dozenDuty_app_does(
 );
 
 DELIMITER //
-CREATE TRIGGER create_debts
+CREATE TRIGGER delete_member
+    BEFORE DELETE ON dozenduty_app_member
+    FOR EACH ROW
+    BEGIN
+        Declare done int default 0;
+        Declare delete_id INT;
+        Declare cur cursor for SELECT DISTINCT memberID FROM dozenDuty_app_grocery;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        
+        Open cur;
+        
+        Repeat
+            FETCH cur into delete_id;
+            IF delete_id=old.memberID THEN
+                DELETE FROM dozenDuty_app_grocery WHERE memberID=delete_id;
+            END IF;
+            UNTIL done
+        END Repeat;
+        close cur;
+    END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER add_debts_member
     AFTER INSERT ON dozenduty_app_member
     FOR EACH ROW
     BEGIN
@@ -103,56 +127,36 @@ CREATE TRIGGER create_debts
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER update_debts
+CREATE TRIGGER add_debts
     AFTER INSERT ON dozenduty_app_grocery
     FOR EACH ROW
     BEGIN
-        Declare done1 int default 0;
-        Declare lender  INT;
-        -- Declare num_members int default 1;
-        Declare cur1 cursor for SELECT DISTINCT memberID FROM dozenDuty_app_grocery;
-        Declare CONTINUE HANDLER FOR NOT FOUND SET done1 = 1;
-
-        SET @num_members = (SELECT count(distinct memberID) FROM dozenDuty_app_member);
-
-        Open cur1;
+        Declare done int default 0;
+        Declare borrower INT;
+        Declare num_members INT;
+        Declare cur cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done = 1;
         
+        SET @num_members = (SELECT count(distinct memberID) FROM dozenDuty_app_member);
+        
+        open cur;
+
         Repeat
-            FETCH cur1 into lender;
-            
-            BEGIN
-                Declare done2 int default 0;
-                Declare borrower INT;
-                Declare cur2 cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
-                Declare CONTINUE HANDLER FOR NOT FOUND SET done2 = 1;
-                
-                
-                
-                open cur2;
+            FETCH cur into borrower;
 
-                Repeat
-                    FETCH cur2 into borrower;
-
-                    IF borrower<>lender THEN
-                        UPDATE dozenDuty_app_money
-                        SET amount= amount + (new.unitPrice * new.quantity / @num_members)
-                        WHERE borrowerID=borrower AND lenderID=lender;
-                        UPDATE dozenDuty_app_money
-                        SET amount= amount + (-1.0) * (new.unitPrice * new.quantity / @num_members)
-                        WHERE borrowerID=lender AND lenderID=borrower;
-                    END IF;
-                
-                    UNTIL done2
-                END Repeat;
-                
-                close cur2;
+            IF borrower<>new.memberID AND done<>1 THEN
+                UPDATE dozenDuty_app_money
+                SET amount = amount + round(( 1.0) * (new.unitPrice * new.quantity / @num_members),2)
+                WHERE borrowerID=borrower AND lenderID=new.memberID;
+                UPDATE dozenDuty_app_money
+                SET amount = amount + round((-1.0) * (new.unitPrice * new.quantity / @num_members),2)
+                WHERE borrowerID=new.memberID AND lenderID=borrower;
+            END IF;
             
-            END;
-            
-            UNTIL done1
+            UNTIL done
         END Repeat;
         
-        close cur1;
+        close cur;
     
     END //
 DELIMITER ;
@@ -180,6 +184,69 @@ CREATE TRIGGER delete_debts
     END //
 DELIMITER ;
 
+DELIMITER //
+CREATE TRIGGER delete_debts_grocery
+    BEFORE DELETE ON dozenduty_app_grocery
+    FOR EACH ROW
+    BEGIN
+        Declare done int default 0;
+        Declare borrower INT;
+        Declare cur cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        
+        open cur;
+
+        Repeat
+            FETCH cur into borrower;
+
+            IF borrower<>old.memberID AND done<>1 THEN
+                UPDATE dozenDuty_app_money
+                SET amount = amount - round(( 1.0) * (old.unitPrice * old.quantity / old.numMember), 2)
+                WHERE borrowerID=borrower AND lenderID=old.memberID;
+                UPDATE dozenDuty_app_money
+                SET amount = amount - round((-1.0) * (old.unitPrice * old.quantity / old.numMember), 2)
+                WHERE borrowerID=old.memberID AND lenderID=borrower;
+            END IF;
+            
+            UNTIL done
+        END Repeat;
+        
+        close cur;
+    
+    END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER update_debts_grocery
+    AFTER UPDATE ON dozenduty_app_grocery
+    FOR EACH ROW
+    BEGIN
+        Declare done int default 0;
+        Declare borrower INT;
+        Declare cur cursor for SELECT DISTINCT memberID FROM dozenDuty_app_member;
+        Declare CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        
+        open cur;
+
+        Repeat
+            FETCH cur into borrower;
+
+            IF borrower<>old.memberID AND done<>1 THEN
+                UPDATE dozenDuty_app_money
+                SET amount = amount - round((( 1.0) * (old.unitPrice * old.quantity / old.numMember)) + (( 1.0) * (new.unitPrice * new.quantity / old.numMember)), 2)
+                WHERE borrowerID=borrower AND lenderID=old.memberID;
+                UPDATE dozenDuty_app_money
+                SET amount = amount - round(((-1.0) * (old.unitPrice * old.quantity / old.numMember)) + ((-1.0) * (new.unitPrice * new.quantity / old.numMember)), 2)
+                WHERE borrowerID=old.memberID AND lenderID=borrower;
+            END IF;
+            
+            UNTIL done
+        END Repeat;
+        
+        close cur;
+    
+    END //
+DELIMITER ;
 
 GRANT ALL ON dozenDuty_new.* TO 'djangouser'@'%';
 FLUSH PRIVILEGES;
