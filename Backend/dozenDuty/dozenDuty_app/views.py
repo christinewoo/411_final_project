@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.db import connection
 from django.http import HttpResponseRedirect
+from pymongo import MongoClient
+
+client = MongoClient('localhost', 27017)
+mongodb = client['dozenduty_mongo']
 
 """ Main Page """
 def main(request):
@@ -79,17 +83,29 @@ def chores(request):
 
 def detailChores(request, id):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.choreID=%s",[id])
+        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status, c.weight FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.choreID=%s",[id])
         chore = cursor.fetchone()
-    return render(request, 'dozenDuty_app/chores_detail.html',{'title':'Chores','chore': chore})
+    if (mongodb.choreList.find_one({'choreName':chore[1]})) is None:
+        tools = []
+    else:
+        tools = (mongodb.choreList.find_one({'choreName':chore[1]}))['toolsNeeded']
+    return render(request, 'dozenDuty_app/chores_detail.html',{'title':'Chores','chore': chore, 'tools': tools})
 
 def addChores(request):
     assign_date = request.POST['assignDate']
     due_date = request.POST['dueDate']
     member_id = request.POST['memberID']
     chore_name = request.POST['choreName']
+    chore_weight = request.POST['weight']
+    if mongodb.choreList.find_one({'choreName':chore_name}) is None:
+        mongodb.choreList.insert_one(
+            {
+                "choreName": chore_name, 
+                "toolsNeeded": []
+            }
+        )
     with connection.cursor() as cursor:
-        cursor.execute('INSERT INTO dozenDuty_app_chore (memberID,name,assignDate,dueDate) VALUES(%s,%s,%s,%s)',[member_id,chore_name,assign_date,due_date])
+        cursor.execute('INSERT INTO dozenDuty_app_chore (memberID,name,assignDate,dueDate,weight) VALUES(%s,%s,%s,%s,%s)',[member_id,chore_name,assign_date,due_date,chore_weight])
     return HttpResponseRedirect('/chores/')
 
 def removeChores(request, id):
@@ -103,6 +119,8 @@ def updateChores(request, id):
     member_id = request.POST['memberID']
     due_date = request.POST['dueDate']
     cur_status = request.POST['status']
+    toolsNeeded = request.POST['tools']
+
     with connection.cursor() as cursor:
         if assign_date is not '':
             cursor.execute('UPDATE dozenDuty_app_chore SET assignDate=%s WHERE choreID=%s',[assign_date,id])
@@ -114,6 +132,14 @@ def updateChores(request, id):
             cursor.execute('UPDATE dozenDuty_app_chore SET dueDate=%s WHERE choreID=%s',[due_date,id])
         if cur_status is not '':
             cursor.execute('UPDATE dozenDuty_app_chore SET status=%s WHERE choreID=%s',[cur_status,id])
+        if toolsNeeded is not '':
+            tools_needed = toolsNeeded.split("; ")
+            mongodb.choreList.update_one(
+                {"choreName": chore_name},
+                { 
+                    "$set": { "toolsNeeded": tools_needed } 
+                }
+            )
     chore_detail_url = '/chores/' + str(id) + '/detail/'
     return HttpResponseRedirect(chore_detail_url)
 
@@ -121,7 +147,7 @@ def searchChores(request):
     name = request.GET.get('q')
     search_key = '%' + name + '%'
     with connection.cursor() as cursor:
-        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.name LIKE %s or m.memberName LIKE %s ORDER BY c.dueDate ASC",[search_key,search_key])
+        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID WHERE c.name LIKE %s or m.memberName LIKE %s or c.status LIKE %sORDER BY c.dueDate ASC",[search_key,search_key,search_key])
         chores = cursor.fetchall()
     return render(request, 'dozenDuty_app/chores_search_results.html', {'title':'Chores','chores': chores, 'name': name})
 
@@ -129,20 +155,20 @@ def searchChores(request):
 """ Members Page """
 def members(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID GROUP BY mo.borrowerID, m.memberName") 
+        cursor.execute("SELECT mo.borrowerID, m.memberName, SUM(mo.amount) FROM dozenDuty_app_member m JOIN dozenDuty_app_money mo ON m.memberID=mo.borrowerID GROUP BY mo.borrowerID, m.memberName ORDER BY m.memberID") 
         temp = cursor.fetchall()
         cursor.execute("SELECT * FROM dozenDuty_app_member") 
         one_member = cursor.fetchone()
     members = []
-    if len(temp) == 0:
+    if len(temp) == 0 and one_member is not None:
         members.append((one_member[0], one_member[1], 0.00))
     else:
         members = list(temp)
         for i in range(len(temp)):
             if members[i][2] == 0:
-                members[i] = (members[i][0], members[i][4], round(members[i][2], 2))
+                members[i] = (members[i][0], members[i][1], round(members[i][2], 2))
             else:
-                members[i] = (members[i][0], members[i][4], round(members[i][2]*(-1), 2))
+                members[i] = (members[i][0], members[i][1], round(members[i][2]*(-1), 2))
     return render(request, 'dozenDuty_app/members.html', {'title':'Members','members': members})
 
 def detailMember(request, id):
@@ -190,13 +216,13 @@ def searchMember(request):
         cursor.execute("SELECT * FROM dozenDuty_app_member WHERE memberName LIKE %s",[search_key]) 
         one_member = cursor.fetchone()
     members = []
-    if len(temp) == 0:
+    if len(temp) == 0 and one_member is not None:
         members.append((one_member[0], one_member[1], 0.00))
     else:
         members = list(temp)
         for i in range(len(temp)):
             if members[i][2] == 0:
-                members[i] = (members[i][0], members[i][4], round(members[i][2], 2))
+                members[i] = (members[i][0], members[i][1], round(members[i][2], 2))
             else:
-                members[i] = (members[i][0], members[i][4], round(members[i][2]*(-1), 2))
+                members[i] = (members[i][0], members[i][1], round(members[i][2]*(-1), 2))
     return render(request, 'dozenDuty_app/members_search_results.html', {'title':'Members','members': members, 'name': name})
