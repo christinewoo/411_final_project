@@ -93,6 +93,7 @@ CREATE TRIGGER delete_member
             FETCH cur into delete_id;
             IF delete_id=old.memberID THEN
                 DELETE FROM dozenDuty_app_grocery WHERE memberID=delete_id;
+                DELETE FROM dozenDuty_app_chore WHERE memberID=delete_id;
             END IF;
             UNTIL done
         END Repeat;

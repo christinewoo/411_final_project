@@ -50,6 +50,7 @@
                 {% csrf_token %}
                 <div>
                     <select name="status" id="status">
+                        <option value=""> &nbsp; </option>
                         <option value="NOT STARTED">NOT STARTED</option>
                         <option value="IN PROGRESS">IN PROGRESS</option>
                         <option value="DONE">DONE</option>
@@ -64,7 +65,12 @@
                     </div>
                 </div>               
                 <div>
-                    <input type="number" name="memberID" placeholder="Member's ID">
+                    <select name="memberID" id="memberID" value="{{chore.2}}">
+                        <option value=""> &nbsp; </option>
+                        {% for member in members %}
+                            <option value= {{ member.0 }}> {{ member.1 }} </option>
+                        {% endfor %}
+                    </select> (Member's ID)
                 </div>
                 <div>
                     <input type="text" name="choreName" placeholder="Chore Name" value="{{chore.1}}">

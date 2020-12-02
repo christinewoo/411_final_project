@@ -17,10 +17,21 @@
                 </div>
             </div>
             <div>
-                <input type="number" name="memberID" placeholder="Member's ID">
+                <select name="memberID" id="memberID">
+                    {% for member in members %}
+                        <option value= {{ member.0 }}> {{ member.1 }} </option>
+                    {% endfor %}
+                </select> (Member's ID)
             </div>
             <div>
-                <input type="text" name="ItemType" placeholder="Item Type">
+                <select name="ItemType" id="unit">
+                    <option value="Vegetable">  Vegetable </option>
+                    <option value="Protein">    Protein   </option>
+                    <option value="Fruit">      Fruit     </option>
+                    <option value="Grain">      Grain     </option>
+                    <option value="Dairy">      Dairy     </option>
+                    <option value="Other">      Other     </option>
+                </select> (Item Type)
             </div>
             <div>
                 <input type="text" name="groceryName" placeholder="Grocery Name">
