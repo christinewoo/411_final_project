@@ -72,35 +72,35 @@ def management_tool():
     if curr_grain_ratio < stan_grain_ratio:
         foodType_warning['Grain'] = tooFew_warning
     elif curr_grain_ratio > 0.5:
-        foodType_warning['Grain'] = tooFew_warning
+        foodType_warning['Grain'] = tooMuch_warning
     else:
         foodType_warning['Grain'] = good_warning
 
     if curr_vegetable_ratio < stan_vegetable_ratio:
         foodType_warning['Vegetable'] = tooFew_warning
-    elif curr_grain_ratio > 0.5:
-        foodType_warning['Vegetable'] = tooFew_warning
+    elif curr_vegetable_ratio > 0.5:
+        foodType_warning['Vegetable'] = tooMuch_warning
     else:
         foodType_warning['Vegetable'] = good_warning
 
     if curr_protein_ratio < stan_protein_ratio:
         foodType_warning['Protein'] = tooFew_warning
-    elif curr_grain_ratio > 0.5:
-        foodType_warning['Protein'] = tooFew_warning
+    elif curr_protein_ratio > 0.5:
+        foodType_warning['Protein'] = tooMuch_warning
     else:
         foodType_warning['Protein'] = good_warning
 
     if curr_fruit_ratio < stan_fruit_ratio:
         foodType_warning['Fruit'] = tooFew_warning
-    elif curr_grain_ratio > 0.5:
-        foodType_warning['Fruit'] = tooFew_warning
+    elif curr_fruit_ratio > 0.5:
+        foodType_warning['Fruit'] = tooMuch_warning
     else:
         foodType_warning['Fruit'] = good_warning
 
     if curr_dairy_ratio < stan_dairy_ratio:
         foodType_warning['Dairy'] = tooFew_warning
-    elif curr_grain_ratio > 0.5:
-        foodType_warning['Dairy'] = tooFew_warning
+    elif curr_dairy_ratio > 0.5:
+        foodType_warning['Dairy'] = tooMuch_warning
     else:
         foodType_warning['Dairy'] = good_warning
     
@@ -230,7 +230,7 @@ def searchGrocery(request):
 """ Chores Page """
 def chores(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID ORDER BY c.dueDate ASC")
+        cursor.execute("SELECT c.choreID, c.name, m.memberName, c.assignDate, c.dueDate, c.status FROM dozenDuty_app_chore as c LEFT JOIN dozenDuty_app_member as m on c.memberID=m.memberID ORDER BY c.status DESC, c.dueDate ASC")
         chores = cursor.fetchall()
         cursor.execute("SELECT memberID,memberName FROM dozenDuty_app_member")
         members = cursor.fetchall()
