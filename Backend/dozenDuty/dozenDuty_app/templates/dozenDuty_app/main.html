@@ -12,6 +12,24 @@
         <br>
         <br>
         <br>
+        <form action="/grocerylist/insert/" style="display: inline;" method="post">
+            {% csrf_token %}
+            <input type="text" name="newGrocery" placeholder="Grocery Name">
+            <input class="btn btn-primary btn-sm mt-1 mb-1" type="submit" value="Add"/>
+        </form>
+        <form action="/grocerylist/reset/" style="display: inline;"method="post">
+            {% csrf_token %}
+            <input class="btn btn-danger btn-sm mt-1 mb-1" type="submit" value="Reset"/>
+        </form>
+        <br>
+        <text><b> Current Shopping List: </b></text>
+        <br>
+        {% for grocery in groceryList %}
+            <text> {{ grocery }}, </text>
+        {% endfor %}
+        <br>
+        <br>
+        <br>
         <div>
             <h4 class="text-center">Chore Weight Distribution</h3>
             <canvas id="bar-chart"></canvas>

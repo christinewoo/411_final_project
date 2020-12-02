@@ -11,21 +11,31 @@
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ chore.1 }}</a>
-              <small class="text-dark">{{ chore.2 }}</small>
-              <small class="text-muted"> assigned on </small>
+              <a class="mr-2" href="#">{{ chore.2 }}</a>
+              <small class="text-muted"> Assigned on </small>
               <small class="text-success">{{ chore.3|date:"F d, Y" }}</small>
             </div>
             <h2>
                 <h3 class="article-title">
-                    Status of {{ chore.1 }}: {{ chore.5 }}
+                    {{ chore.1 }}
                     <form action="/chores/{{chore.0}}/detail/" style="display: inline;"method="post">
                         {% csrf_token %}
-                        <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                        <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" style="float: right;" value="View Details"/>
                     </form>
                 </h3>
             </h2>
-            <small class='text-danger'>This item should be done by {{ chore.4|date:"F d, Y" }}</small>
+            <div>
+                <text> Status: </text>
+                {% if chore.5 == "DONE" %}
+                    <text class='text-success'> {{ chore.5 }} </text>
+                {% elif chore.5 == "IN PROGRESS" %}
+                    <text class='text-warning'> {{ chore.5 }} </text>
+                {% else %}
+                    <text class='text-danger'> {{ chore.5 }} </text>
+                {% endif %}
+                <br>
+                <text> Due Date: <b>{{ chore.4|date:"F d, Y" }}</b> </text>
+            </div>
           </div>
         </article>
     {% endfor %}

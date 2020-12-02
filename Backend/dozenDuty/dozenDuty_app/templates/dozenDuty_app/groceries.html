@@ -64,7 +64,7 @@
                     {{ grocery.0 }}: ${{ grocery.9 }}
                     <form action="/groceries/{{grocery.8}}/detail/" style="display: inline;"method="post">
                         {% csrf_token %}
-                        <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                        <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" style="float: right;" value="View Details"/>
                     </form>
                 </h3>
             </h2>

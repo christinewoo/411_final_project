@@ -17,7 +17,7 @@
                     <h3 class="article-title">{{ member.1 }}
                         <form action="/members/{{member.0}}/detail/" style="display: inline;"method="post">
                             {% csrf_token %}
-                            <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" value="View Details"/>
+                            <input class="btn btn-warning btn-sm mt-1 mb-1" type="submit" style="float: right;" value="View Details"/>
                         </form>
                     </h3>
                     <div>

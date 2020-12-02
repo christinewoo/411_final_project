@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.main, name='dozenDuty_main'),
+    path('grocerylist/insert/', views.insertGroceryList, name='grocerylist-insert'),
+    path('grocerylist/reset/', views.resetGroceryList, name='grocerylist-resert'),
 
     # Groceries
     path('groceries/', views.groceries, name='groceries'),

@@ -106,6 +106,30 @@ def management_tool():
     
     return categories_labels, categories_data, foodType_warning
 
+def insertGroceryList(request):
+    new_grocery = request.POST['newGrocery']
+    mongodb.groceryList.update_one(
+            {"listName": 'Current'},
+            { 
+                "$push": { "groceryNeeded": new_grocery } 
+            }
+        )
+    return HttpResponseRedirect('/')
+
+def resetGroceryList(request):
+    mongodb.groceryList.update_one(
+            {"listName": 'Current'},
+            { 
+                "$set": { "listName": 'Past' } 
+            }
+        )
+    mongodb.groceryList.insert_one(
+            { 
+                "listName": 'Current',
+                "groceryNeeded": []
+            }
+        )
+    return HttpResponseRedirect('/')
 
 """ Main Page """
 def main(request):
@@ -126,7 +150,8 @@ def main(request):
             weights_labels.append(member[0])
             weights_data.append(0)
     categories_labels, categories_data, foodType_warning = management_tool()
-    return render(request, 'dozenDuty_app/main.html', {'categories_labels': categories_labels, 'categories_data': categories_data,'weights_labels': weights_labels, 'weights_data': weights_data, 'foodType_warning':foodType_warning})
+    groceryList = mongodb.groceryList.find_one({"listName":"Current"})['groceryNeeded']
+    return render(request, 'dozenDuty_app/main.html', {'categories_labels': categories_labels, 'categories_data': categories_data,'weights_labels': weights_labels, 'weights_data': weights_data, 'foodType_warning':foodType_warning, 'groceryList':groceryList})
 
 """ Groceries Page """
 def groceries(request):
