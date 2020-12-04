@@ -33,7 +33,7 @@ CREATE TABLE dozenDuty_app_grocery(
 	unitPrice	REAL unsigned, 
 	quantity	REAL unsigned DEFAULT 0,
     numMember   INT unsigned DEFAULT 1, 
-	purchaseDate	DATE NOT NULL, 
+	PurchaseDate	DATE NOT NULL, 
 	ExpirationDate	DATE, 
 	ItemType	VARCHAR(20),
     ItemUnit    VARCHAR(10),
